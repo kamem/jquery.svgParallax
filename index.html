@@ -30,23 +30,27 @@ path {
 <script>
 $(function(){
 	$(window).svgParallax('#svg1', {
-		speed: 0.2,
-		type : 'type2',
+		speed: 3,
+		type: 'timing',
+		easing: 'easeInBounce',
 		fixPosition: $('#svg1').offset().top
 	});
 	$(window).svgParallax('#svg2', {
-		speed: 0.2,
-		type : 'type2',
+		speed: 5,
+		type: 'timing',
+		easing: 'easeInOutBounce',
 		fixPosition: $('#svg2').offset().top
 	});
 	$(window).svgParallax('#svg3', {
 		speed: 0.2,
-		type : 'type2',
+		type : 'scrollFit',
+		easing: 'easeInOutBounce',
 		fixPosition: $('#svg3').offset().top
 	});
 	$(window).svgParallax('#svg4', {
-		speed: 0.2,
-		type : 'type2',
+		speed: 0.4,
+		type : 'scrollFit',
+		easing: 'easeInBounce',
 		fixPosition: $('#svg4').offset().top
 	});
 });
