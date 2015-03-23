@@ -2,7 +2,7 @@
 $.fn.svgParallax = function(el,options) {
 	var parallaxWindow = this;
 	var $el = $(el);
-	var $paths = $el.find('path');
+	var $paths = $el.find('path,line');
 
 	var ops = $.extend({
 		direction : 'y',
@@ -59,7 +59,7 @@ $.fn.svgParallax = function(el,options) {
 			windowHeight: windowHeight,
 			contentStartLine:  scrollNum + ((direction === 'y' ? windowHeight : windowWidth) / (100 / contentStartLinePercent))
 		};
-	};
+	}
 
 	var timingValue = 0;
 	var parallax = {
@@ -80,18 +80,17 @@ $.fn.svgParallax = function(el,options) {
 		},
 
 		timing: function() {
-			var fixLine = fixPosition > 0 ? fixPosition : parallaxObj.offset()[scrollDirection];
-			if(info().contentStartLine >= fixLine) {
+			if(info().contentStartLine >= fixPosition) {
 				if(!isLineOver) {
 					isLineOver = true;
 					startPathDrawing(true);
-				};
+				}
 			} else {
 				if(isLineOver) {
 					isLineOver = false;
 					startPathDrawing(false);
-				};
-			};
+				}
+			}
 
 			function startPathDrawing(isStart) {
 				setTimeout(function() {
@@ -132,8 +131,8 @@ $.fn.svgParallax = function(el,options) {
 			$('.parallaxDebug').css({
 				top: info().contentStartLine
 			});
-		};
-	};
+		}
+	}
 
 	if(debug) {
 		$debug = $('body').append('<hr class="parallaxDebug">').find('.parallaxDebug').css({
@@ -143,7 +142,7 @@ $.fn.svgParallax = function(el,options) {
 			zIndex: 99999
 		});
 		debugView();
-	};
+	}
 };
 
 
