@@ -10,7 +10,7 @@ $.fn.svgParallax = function(el,options) {
 		fixPosition : 0,
 		speed : 1,
 		contentStartLinePercent : 50,
-		easing: 'liner',
+		easing: 'linear',
 		debug: false
 	},options);
 
@@ -106,7 +106,6 @@ $.fn.svgParallax = function(el,options) {
 	});
 
 
-	//debug
 	function debugView() {
 		if(debug) {
 			$('.parallaxDebug').css({
@@ -128,7 +127,7 @@ $.fn.svgParallax = function(el,options) {
 
 
 var easing = {
-	liner : function(t,b,c,d){return b+c*t},
+	linear : function(t,b,c,d){return b+c*t},
 	easeInQuad:function(i,b,c,d){return c*(i/=d)*i+b;},
 	easeOutQuad:function(i,b,c,d){return -c*(i/=d)*(i-2)+b;},
 	easeInOutQuad:function(i,b,c,d){if((i/=d/2)<1){return c/2*i*i+b;}return -c/2*((--i)*(i-2)-1)+b;},
