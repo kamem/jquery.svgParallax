@@ -6,50 +6,36 @@ $.fn.svgParallax = function(el,options) {
 
 	var ops = $.extend({
 		direction : 'y',
-
 		type : 'scrollFit',
-
 		fixPosition : 0,
 		speed : 1,
-		minValue : -99999,
-		maxValue : 99999,
-		adjustment : 0,
-
 		contentStartLinePercent : 50,
-
 		easing: 'liner',
-
 		debug: false
 	},options);
 
 	var direction = ops.direction;
-	var scrollDirection = direction === 'y' ? 'top' : 'left';
-
+	var scrollDirection = direction === 'y' ? 'Top' : 'Left';
 	var type = ops.type;
-
 	var speed = ops.speed;
 	var fixPosition = ops.fixPosition;
 	var contentStartLinePercent = ops.contentStartLinePercent;
-
 	var debug = ops.debug;
 
 	var isLineOver = false;
 
-	var pathsLength = [];
-	$paths.each(function(i, path) {
-		var style = path.style;
-		style.strokeDasharray = style.strokeDashoffset = path.getTotalLength();
-		pathsLength[i] = parseFloat(path.getTotalLength());
-	});
-
-	var adjustment = Math.max.apply(null, pathsLength);
-
+	var maxPathLength = (function() {
+		var pathsLength = [];
+		$paths.each(function(i, path) {
+			var style = path.style;
+			style.strokeDasharray = style.strokeDashoffset = path.getTotalLength();
+			pathsLength[i] = parseFloat(path.getTotalLength());
+		});
+		return Math.max.apply(null, pathsLength);
+	})();
 
 	function info() {
-		var dirStr = scrollDirection.replace(/^[a-z]/g, function(val){
-			return val.toUpperCase();
-		});
-		var scrollNum = parallaxWindow['scroll' + dirStr]();
+		var scrollNum = parallaxWindow['scroll' + scrollDirection]();
 		var windowWidth = !window.innerWidth ? document.documentElement.clientWidth : window.innerWidth;
 		var windowHeight = !window.innerHeight ?  document.documentElement.clientHeight : window.innerHeight;
 
@@ -61,21 +47,23 @@ $.fn.svgParallax = function(el,options) {
 		};
 	}
 
+	function strokeDraw(value, path) {
+		var style = path.style;
+		var strokeDasharray = path.getTotalLength();
+
+		var percent = value / strokeDasharray;
+		percent = percent < 0 ? 0 : percent;
+		percent = percent > 1 ? 1 : percent;
+
+		style.strokeDashoffset = strokeDasharray - easing[ops.easing](percent, 0, strokeDasharray, 1);
+	}
+
 	var timingValue = 0;
 	var parallax = {
 		scrollFit: function() {
-			var value = -parseFloat(-info().scrollNum / speed + fixPosition / speed) + adjustment;
+			var value = -parseFloat(-info().scrollNum / speed + fixPosition / speed) + maxPathLength;
 			$paths.each(function(i, path) {
-				var style = path.style;
-				var strokeDasharray = path.getTotalLength();
-				var offsetValue = strokeDasharray - value;
-				offsetValue = 0 > offsetValue ? 0 : strokeDasharray < offsetValue ? strokeDasharray : offsetValue;
-
-				var percent = offsetValue / strokeDasharray;
-				percent = percent < 0 ? 0 : percent;
-				percent = percent > 1 ? 1 : percent;
-
-				style.strokeDashoffset = easing[ops.easing](percent, 0, strokeDasharray, 1);
+				strokeDraw(value, path);
 			});
 		},
 
@@ -96,17 +84,10 @@ $.fn.svgParallax = function(el,options) {
 				setTimeout(function() {
 					timingValue += isLineOver ? speed : -speed;
 					$paths.each(function(i, path) {
-						var style = path.style;
-						var strokeDasharray = path.getTotalLength();
-
-						var percent = timingValue / strokeDasharray;
-						percent = percent < 0 ? 0 : percent;
-						percent = percent > 1 ? 1 : percent;
-
-						style.strokeDashoffset = strokeDasharray - easing[ops.easing](percent, 0, strokeDasharray, 1);
+						strokeDraw(timingValue, path);
 					});
 
-					if(!(timingValue > adjustment || timingValue < 0) && isLineOver === isStart) {
+					if(!(timingValue > maxPathLength || timingValue < 0) && isLineOver === isStart) {
 						startPathDrawing(isStart);
 					}
 				}, 0);
